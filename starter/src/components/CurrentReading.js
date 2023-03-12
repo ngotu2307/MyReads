@@ -1,7 +1,16 @@
 import "../App.css";
 import { useState } from "react";
+import { update } from "../BooksAPI.js";
 
-function CurrentlyReading({ listBook }) {
+function CurrentlyReading({ listBook, updatePage }) {
+
+    const selectShelf = (currentBook, shelf) => {
+        update(currentBook, shelf).then(result => {
+            updatePage()
+            console.log(result)
+        })
+    }
+
     return (
         <div className="bookshelf">
             <h2 className="bookshelf-title">Currently Reading</h2>
@@ -21,7 +30,7 @@ function CurrentlyReading({ listBook }) {
                                         }}
                                     ></div>
                                     <div className="book-shelf-changer">
-                                        <select>
+                                        <select value={book.shelf} onChange={(event) => selectShelf(book, event.target.value)}>
                                             <option value="none" disabled>
                                                 Move to...
                                             </option>

@@ -1,7 +1,15 @@
 import "../App.css";
 import { useState } from "react";
+import { update } from "../BooksAPI.js";
 
-function Read({ listBook }) {
+function Read({ listBook, updatePage }) {
+    const selectShelf = (currentBook, shelf) => {
+        update(currentBook, shelf).then(result => {
+            updatePage()
+            console.log(result)
+        })
+    }
+
     return (
         <div className="bookshelf">
             <h2 className="bookshelf-title">Read</h2>
@@ -17,11 +25,11 @@ function Read({ listBook }) {
                                             width: 128,
                                             height: 192,
                                             backgroundImage:
-                                            "url(" + book.imageLinks.thumbnail + ")",
+                                                "url(" + book.imageLinks.thumbnail + ")",
                                         }}
                                     ></div>
                                     <div className="book-shelf-changer">
-                                        <select>
+                                        <select value={book.shelf} onChange={(event) => selectShelf(book, event.target.value)}>
                                             <option value="none" disabled>
                                                 Move to...
                                             </option>

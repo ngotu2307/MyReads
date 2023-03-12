@@ -16,11 +16,19 @@ function App() {
   // 1. callback luôn được gọi sau component mount
   useEffect(() => {
     console.log("Call API")
+    callAPI()
+  }, [])
+
+  const update = () => {
+    callAPI()
+  }
+
+  const callAPI = () => {
     getAll().then(result => {
       console.log(result)
       setAllBook(result)
     })
-  }, [])
+  }
 
   function getCurrentReading() {
     const currentReadingShelf = allBook.filter(book => book.shelf === "currentlyReading")
@@ -68,9 +76,9 @@ function App() {
           </div>
           <div className="list-books-content">
             <div>
-              <CurrentReading listBook={getCurrentReading()} />
-              <WantToRead listBook={getWantToRead()}/>
-              <Read listBook={getRead()}/>
+              <CurrentReading listBook={getCurrentReading()} updatePage={update} />
+              <WantToRead listBook={getWantToRead()} updatePage={update} />
+              <Read listBook={getRead()} updatePage={update} />
             </div>
           </div>
           <div className="open-search">
