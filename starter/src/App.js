@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import Read from "./components/Read"
 import WantToRead from "./components/WantToRead"
 import CurrentReading from "./components/CurrentReading"
-import { getAll, search } from "./BooksAPI";
+import ShelfSearch from "./components/ShelfSearch"
+import { getAll } from "./BooksAPI";
 
 function App() {
   const [showSearchPage, setShowSearchpage] = useState(false);
   const [allBook, setAllBook] = useState([])
+  const [query, setQuery] = useState("");
 
   // useEffect(callback)
   // useEffect(callback, [])
@@ -41,7 +43,11 @@ function App() {
 
   function getRead() {
     return allBook.filter(book => book.shelf === "read")
-  } 
+  }
+
+  const handleChange = (event) => {
+    setQuery(event.target.value);
+  };
 
   return (
     <div className="app">
@@ -58,16 +64,11 @@ function App() {
               <input
                 type="text"
                 placeholder="Search by title, author, or ISBN"
+                onChange={handleChange}
               />
             </div>
           </div>
-          <div className="search-books-results">
-            <ol className="books-grid">
-              {allBook.map(book => (
-                <li key={book.id}>{book.title}</li>
-              ))}
-            </ol>
-          </div>
+          <ShelfSearch queryValue={query} />
         </div>
       ) : (
         <div className="list-books">
