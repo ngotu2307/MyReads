@@ -27,7 +27,7 @@ function App() {
 
   const callAPI = () => {
     getAll().then(result => {
-      console.log(result)
+      // console.log(result)
       setAllBook(result)
     })
   }
@@ -49,6 +49,11 @@ function App() {
     setQuery(event.target.value);
   };
 
+  const clickSearchHandler = () => {
+    setShowSearchpage(!showSearchPage)
+    setQuery("")
+  }
+
   return (
     <div className="app">
       {showSearchPage ? (
@@ -56,7 +61,7 @@ function App() {
           <div className="search-books-bar">
             <a
               className="close-search"
-              onClick={() => setShowSearchpage(!showSearchPage)}
+              onClick={() => clickSearchHandler()}
             >
               Close
             </a>
@@ -68,7 +73,7 @@ function App() {
               />
             </div>
           </div>
-          <ShelfSearch queryValue={query} />
+          <ShelfSearch queryValue={query} updatePage={update} />
         </div>
       ) : (
         <div className="list-books">
