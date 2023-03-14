@@ -1,9 +1,8 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import Read from "./components/Read"
-import WantToRead from "./components/WantToRead"
-import CurrentReading from "./components/CurrentReading"
+import Shelf from "./components/Shelf"
 import ShelfSearch from "./components/ShelfSearch"
+import { Routes, Route, Link } from "react-router-dom";
 import { getAll } from "./BooksAPI";
 
 function App() {
@@ -14,7 +13,7 @@ function App() {
   // useEffect(callback)
   // useEffect(callback, [])
   // useEffect(callback, [deps])
-  
+
   // 1. callback luôn được gọi sau component mount
   useEffect(() => {
     console.log("Call API")
@@ -35,7 +34,7 @@ function App() {
   function getCurrentReading() {
     const currentReadingShelf = allBook.filter(book => book.shelf === "currentlyReading")
     return currentReadingShelf
-  } 
+  }
 
   function getWantToRead() {
     return allBook.filter(book => book.shelf === "wantToRead")
@@ -59,12 +58,13 @@ function App() {
       {showSearchPage ? (
         <div className="search-books">
           <div className="search-books-bar">
-            <a
+            <Link
+              to="/"
               className="close-search"
               onClick={() => clickSearchHandler()}
             >
               Close
-            </a>
+            </Link>
             <div className="search-books-input-wrapper">
               <input
                 type="text"
@@ -73,7 +73,7 @@ function App() {
               />
             </div>
           </div>
-          <ShelfSearch queryValue={query} updatePage={update} />
+          <ShelfSearch listHomeBook={allBook} queryValue={query} updatePage={update} />
         </div>
       ) : (
         <div className="list-books">
@@ -82,13 +82,13 @@ function App() {
           </div>
           <div className="list-books-content">
             <div>
-              <CurrentReading listBook={getCurrentReading()} updatePage={update} />
-              <WantToRead listBook={getWantToRead()} updatePage={update} />
-              <Read listBook={getRead()} updatePage={update} />
+              <Shelf shelfName="Currently Reading" listBook={getCurrentReading()} updatePage={update} />
+              <Shelf shelfName="Want to Read" listBook={getWantToRead()} updatePage={update} />
+              <Shelf shelfName="Read" listBook={getRead()} updatePage={update} />
             </div>
           </div>
           <div className="open-search">
-            <a onClick={() => setShowSearchpage(!showSearchPage)}>Add a book</a>
+            <Link to="/search" onClick={() => setShowSearchpage(!showSearchPage)}>Add a book</Link>
           </div>
         </div>
       )}

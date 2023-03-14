@@ -1,8 +1,9 @@
 import "../App.css";
 import { useEffect, useState } from "react";
 import { search, update } from "../BooksAPI";
+import Book from "./Book"
 
-function ShelfSearch({ queryValue, updatePage }) {
+function ShelfSearch({ listHomeBook, queryValue, updatePage }) {
   const [allBook, setAllBook] = useState([])
 
   useEffect(() => {
@@ -11,18 +12,33 @@ function ShelfSearch({ queryValue, updatePage }) {
   }, [queryValue])
 
   const callSearchAPI = (query) => {
-    // console.log("====Query: " + query)
     search(query).then(result => {
-      // console.log("Result: " + JSON.stringify(result))
       if(result !== undefined && result.error !== "empty query" ){
-        setAllBook(result)
+
+        // compare with book in HomePage
+        const newListBook = rebuildListBook(result)
+        // console.log("newListBook : " + newListBook);
+        setAllBook(newListBook)
       } else {
         setAllBook([])
       }
     })
   }
 
-  const selectShelf = (currentBook, updatedShelf) => {
+  const rebuildListBook = (searchedBooks) => {
+    const newListBook = []
+    searchedBooks.map((searchBook) => {
+      const homeBooks = listHomeBook.filter(homeBook => homeBook.id === searchBook.id)
+      if (homeBooks.length === 0) {
+        newListBook.push(searchBook)
+      } else {
+        newListBook.push(homeBooks[0])
+      }
+    })
+    return newListBook
+  }
+
+  const toShelf = (currentBook, updatedShelf) => {
     // console.log("current book: " + JSON.stringify(currentBook) + ", updatedShelf: " + shelf)
     update(currentBook, updatedShelf).then(result => {
         updatePage()
@@ -49,33 +65,7 @@ function ShelfSearch({ queryValue, updatePage }) {
       <ol className="books-grid">
         { allBook.map(book => (
           <li key={book.id}>
-            <div className="book">
-              <div className="book-top">
-                <div
-                  className="book-cover"
-                  style={{
-                    width: 128,
-                    height: 193,
-                    backgroundImage: book.imageLinks ? "url(" + book.imageLinks.thumbnail + ")" : "",
-                  }}
-                ></div>
-                <div className="book-shelf-changer">
-                  <select value={book.hasOwnProperty("shelf") ? book.shelf : "none"} onChange={(event) => selectShelf(book, event.target.value)}>
-                    <option value="moveTo" disabled>
-                      Move to...
-                    </option>
-                    <option value="currentlyReading">
-                      Currently Reading
-                    </option>
-                    <option value="wantToRead">Want to Read</option>
-                    <option value="read">Read</option>
-                    <option value="none">None</option>
-                  </select>
-                </div>
-              </div>
-              <div className="book-title">{book.title}</div>
-              <div className="book-authors">{book.authors}</div>
-            </div>
+            <Book book={book} selectShelf={toShelf} />
           </li>
         ))}
       </ol>
